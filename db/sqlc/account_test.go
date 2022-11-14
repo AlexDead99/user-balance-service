@@ -3,12 +3,14 @@ package db
 import (
 	"context"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
-func TestCreateAccount(t *testing.T){
-	arg:=CreateAccountParams{
-		Owner: "tom",
-		Balance: 100
+func TestCreateAccount(t *testing.T) {
+	arg := CreateAccountParams{
+		Owner:   "tom",
+		Balance: 100,
 	}
 
 	account, err := testQueries.CreateAccount(context.Background(), arg)
@@ -23,4 +25,3 @@ func TestCreateAccount(t *testing.T){
 	require.NotZero(t, account.CreatedAt)
 
 }
-
