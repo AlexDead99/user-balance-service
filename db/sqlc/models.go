@@ -5,41 +5,40 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 )
 
 type Accounts struct {
-	AccountID int32          `json:"account_id"`
-	Owner     sql.NullString `json:"owner"`
-	Balance   sql.NullString `json:"balance"`
-	CreatedAt time.Time      `json:"created_at"`
+	AccountID int32     `json:"account_id"`
+	Owner     string    `json:"owner"`
+	Balance   float32   `json:"balance"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type OrdersDetails struct {
-	OrderID    int32         `json:"order_id"`
-	TransferID sql.NullInt32 `json:"transfer_id"`
-	ProductID  sql.NullInt32 `json:"product_id"`
-	Amount     sql.NullInt32 `json:"amount"`
-	CreatedAt  time.Time     `json:"created_at"`
+	OrderID    int32     `json:"order_id"`
+	TransferID int32     `json:"transfer_id"`
+	ProductID  int32     `json:"product_id"`
+	Amount     int32     `json:"amount"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 type Products struct {
-	ProductID int32          `json:"product_id"`
-	Name      sql.NullString `json:"name"`
-	Price     sql.NullString `json:"price"`
-	Amount    sql.NullInt32  `json:"amount"`
+	ProductID int32   `json:"product_id"`
+	Name      string  `json:"name"`
+	Price     float32 `json:"price"`
+	Amount    int32   `json:"amount"`
 }
 
 type Services struct {
-	ServiceID int32          `json:"service_id"`
-	Name      sql.NullString `json:"name"`
+	ServiceID int32  `json:"service_id"`
+	Name      string `json:"name"`
 }
 
 type Transfers struct {
-	TransferID int32          `json:"transfer_id"`
-	UserID     sql.NullInt32  `json:"user_id"`
-	ServiceID  sql.NullInt32  `json:"service_id"`
-	TotalPrice sql.NullString `json:"total_price"`
-	CreatedAt  time.Time      `json:"created_at"`
+	TransferID int32     `json:"transfer_id"`
+	UserID     int32     `json:"user_id"`
+	ServiceID  int32     `json:"service_id"`
+	TotalPrice float32   `json:"total_price"`
+	CreatedAt  time.Time `json:"created_at"`
 }

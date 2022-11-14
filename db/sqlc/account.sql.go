@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createAccount = `-- name: CreateAccount :one
@@ -19,8 +18,8 @@ INSERT INTO accounts (
 `
 
 type CreateAccountParams struct {
-	Owner   sql.NullString `json:"owner"`
-	Balance sql.NullString `json:"balance"`
+	Owner   string  `json:"owner"`
+	Balance float32 `json:"balance"`
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Accounts, error) {
@@ -60,8 +59,8 @@ RETURNING account_id, owner, balance, created_at
 `
 
 type UpdateAccountParams struct {
-	AccountID int32          `json:"account_id"`
-	Balance   sql.NullString `json:"balance"`
+	AccountID int32   `json:"account_id"`
+	Balance   float32 `json:"balance"`
 }
 
 func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Accounts, error) {
