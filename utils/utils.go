@@ -34,3 +34,7 @@ func CreateOwner() string {
 func CreateBalance() float32 {
 	return float32(generateRandomInt(300, 5000))
 }
+
+func CreateDescription() string {
+	return generateRandomName(10)
+}
