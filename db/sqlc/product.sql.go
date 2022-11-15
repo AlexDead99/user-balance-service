@@ -26,6 +26,24 @@ func (q *Queries) GetProduct(ctx context.Context, productID int32) (Products, er
 	return i, err
 }
 
+const getProductForUpdate = `-- name: GetProductForUpdate :one
+SELECT product_id, name, price, amount FROM products
+WHERE product_id = $1 LIMIT 1
+FOR NO KEY UPDATE
+`
+
+func (q *Queries) GetProductForUpdate(ctx context.Context, productID int32) (Products, error) {
+	row := q.db.QueryRowContext(ctx, getProductForUpdate, productID)
+	var i Products
+	err := row.Scan(
+		&i.ProductID,
+		&i.Name,
+		&i.Price,
+		&i.Amount,
+	)
+	return i, err
+}
+
 const updateProduct = `-- name: UpdateProduct :one
 UPDATE products
   set amount = $2

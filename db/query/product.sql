@@ -2,7 +2,7 @@
 SELECT * FROM products
 WHERE product_id = $1 LIMIT 1;
 
---name: GetProductForUpdate :one
+-- name: GetProductForUpdate :one
 SELECT * FROM products
 WHERE product_id = $1 LIMIT 1
 FOR NO KEY UPDATE;
