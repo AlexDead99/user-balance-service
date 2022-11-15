@@ -1,0 +1,35 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:12-alpine
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=simple
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    entrypoint:
+      [
+        "/app/wait-for.sh",
+        "postgres:5432",
+        "--",
+        "/app/main"
+      ]
+volumes:
+  dbdata:

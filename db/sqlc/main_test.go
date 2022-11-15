@@ -2,21 +2,27 @@ package db
 
 import (
 	"database/sql"
-	"testing"
 	"log"
 	"os"
-	"github.com/lib/pq"
+	"testing"
+
+	_ "github.com/lib/pq"
 )
 
 const (
 	dbDriver = "postgres"
-	dbSource = "postgresql://postgres:root@localhost:5432/balance?ssl_mode=false"
+	dbSource = "postgresql://postgres:root@localhost:5432/simple?sslmode=disable"
 )
 
 var testQueries *Queries
 
-func TestMain(m *testing.M){
+func TestMain(m *testing.M) {
 	conn, err := sql.Open(dbDriver, dbSource)
+	if err != nil {
+		log.Fatal("cannot establish connection to database: ", err)
+	}
+
+	err = conn.Ping()
 	if err != nil {
 		log.Fatal("cannot establish connection to database: ", err)
 	}
