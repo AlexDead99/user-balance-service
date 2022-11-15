@@ -1,0 +1,94 @@
+basePath: /
+definitions:
+  api.createAccountRequest:
+    properties:
+      balance:
+        minimum: 1
+        type: number
+      owner:
+        type: string
+    required:
+    - owner
+    type: object
+  api.updateAccountRequest:
+    properties:
+      amount:
+        type: number
+    required:
+    - amount
+    type: object
+  db.Accounts:
+    properties:
+      account_id:
+        type: integer
+      balance:
+        type: number
+      created_at:
+        type: string
+      owner:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: This is a small user balance server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Balance API
+  version: "1.0"
+paths:
+  /accounts:
+    post:
+      consumes:
+      - application/json
+      description: Create user's account
+      parameters:
+      - description: user
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/api.createAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.Accounts'
+      summary: Create an account
+      tags:
+      - accounts
+  /accounts/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update user's account
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: user
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/api.updateAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.Accounts'
+      summary: Update account's balance
+      tags:
+      - accounts
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

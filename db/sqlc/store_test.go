@@ -39,3 +39,17 @@ func TestTransferTx(t *testing.T) {
 	}
 
 }
+
+func TestTransferTxWithInvalidProductId(t *testing.T) {
+	store := NewStore(testDB)
+
+	txParams := TransferTxParams{
+		UserId:      int32(1),
+		Products:    []*ProductsParams{{100, 1}},
+		ServiceId:   1,
+		Description: utils.CreateDescription(),
+	}
+
+	_, err := store.TransferTx(context.Background(), txParams)
+	require.NotEmpty(t, err)
+}
