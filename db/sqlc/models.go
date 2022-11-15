@@ -36,9 +36,11 @@ type Services struct {
 }
 
 type Transfers struct {
-	TransferID int32     `json:"transfer_id"`
-	UserID     int32     `json:"user_id"`
-	ServiceID  int32     `json:"service_id"`
-	TotalPrice float32   `json:"total_price"`
-	CreatedAt  time.Time `json:"created_at"`
+	TransferID  int32     `json:"transfer_id"`
+	UserID      int32     `json:"user_id"`
+	ServiceID   int32     `json:"service_id"`
+	TotalPrice  float32   `json:"total_price"`
+	CreatedAt   time.Time `json:"created_at"`
+	Description string    `json:"description"`
+	Status      string    `json:"status"`
 }
