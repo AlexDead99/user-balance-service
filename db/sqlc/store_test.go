@@ -16,7 +16,7 @@ func TestTransferTx(t *testing.T) {
 	for i := 0; i < n; i++ {
 		txParams := TransferTxParams{
 			UserId:      int32(i),
-			Products:    []*ProductsParams{{2, 1}, {3, 2}},
+			Products:    []*ProductsParams{{3, 1}},
 			ServiceId:   1,
 			Description: utils.CreateDescription(),
 		}

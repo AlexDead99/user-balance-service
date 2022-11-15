@@ -61,7 +61,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		var totalPrice float32 = 0.0
 
 		for _, product := range arg.Products {
-			productInfo, err := q.GetProduct(context.Background(), product.ProductId)
+			productInfo, err := q.GetProductForUpdate(context.Background(), product.ProductId)
 			if err != nil {
 				return err
 			}
