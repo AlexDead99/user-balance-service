@@ -48,11 +48,11 @@ func (q *Queries) DeleteOrder(ctx context.Context, orderID int32) error {
 
 const listOrders = `-- name: ListOrders :many
 SELECT order_id, transfer_id, product_id, amount, created_at FROM "ordersDetails"
-WHERE order_id = $1
+WHERE transfer_id = $1
 `
 
-func (q *Queries) ListOrders(ctx context.Context, orderID int32) ([]OrdersDetails, error) {
-	rows, err := q.db.QueryContext(ctx, listOrders, orderID)
+func (q *Queries) ListOrders(ctx context.Context, transferID int32) ([]OrdersDetails, error) {
+	rows, err := q.db.QueryContext(ctx, listOrders, transferID)
 	if err != nil {
 		return nil, err
 	}

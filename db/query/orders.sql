@@ -7,7 +7,7 @@ INSERT INTO "ordersDetails" (
 
 -- name: ListOrders :many
 SELECT * FROM "ordersDetails"
-WHERE order_id = $1;
+WHERE transfer_id = $1;
 
 -- name: DeleteOrder :exec
 DELETE FROM "ordersDetails"
