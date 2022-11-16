@@ -267,6 +267,12 @@ func (store *Store) DeleteTransferTx(ctx context.Context, arg DeleteTransferTxPa
 			q.DeleteOrder(ctx, order.OrderID)
 		}
 
+		updateTransferParam := UpdateTransferParams{
+			TransferID: transfer.TransferID,
+			Status:     "Failed",
+		}
+		q.UpdateTransfer(ctx, updateTransferParam)
+
 		result.Success = true
 		return nil
 

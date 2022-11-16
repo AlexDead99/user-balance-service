@@ -17,9 +17,11 @@ RETURNING *;
 
 -- name: TransactionHistoryForUser :many
 SELECT * FROM transfers
-WHERE user_id = $1 AND EXTRACT(MONTH FROM created_at) >= $1 AND EXTRACT(YEAR FROM created_at) >= $2 AND status NOT IN ('Success');
+WHERE user_id = $1 AND EXTRACT(MONTH FROM created_at) >= $1 AND EXTRACT(YEAR FROM created_at) >= $2 AND status IN ('Success');
 
 -- name: GeneralReport :many
 SELECT * FROM transfers
-WHERE EXTRACT(MONTH FROM created_at) = $1 AND EXTRACT(YEAR FROM created_at) = $2 AND status NOT IN ('Success');
+JOIN services
+ON transfers.service_id = services.service_id
+WHERE EXTRACT(MONTH FROM created_at) = $1 AND EXTRACT(YEAR FROM created_at) = $2 AND status IN ('Success');
 

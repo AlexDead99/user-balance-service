@@ -10,6 +10,42 @@ definitions:
     required:
     - owner
     type: object
+  api.createTransferRequest:
+    properties:
+      description:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/db.ProductsParams'
+        type: array
+      service_id:
+        type: integer
+      user_id:
+        type: integer
+    required:
+    - description
+    - products
+    - service_id
+    - user_id
+    type: object
+  api.fulfilTransferRequest:
+    properties:
+      status:
+        enum:
+        - Success
+        - Failed
+        type: string
+      transfer_id:
+        type: integer
+    required:
+    - status
+    - transfer_id
+    type: object
+  api.fulfilTransferResponse:
+    properties:
+      status:
+        type: boolean
+    type: object
   api.updateAccountRequest:
     properties:
       amount:
@@ -27,6 +63,20 @@ definitions:
         type: string
       owner:
         type: string
+    type: object
+  db.ProductsParams:
+    properties:
+      amount:
+        type: integer
+      product_id:
+        type: integer
+    type: object
+  db.TransferTxResult:
+    properties:
+      success:
+        type: boolean
+      transaction_id:
+        type: integer
     type: object
   db.UpdateUserBalanceTxResult:
     properties:
@@ -115,6 +165,49 @@ paths:
       summary: Update account's balance
       tags:
       - accounts
+  /transfers:
+    post:
+      consumes:
+      - application/json
+      description: Create transfer
+      parameters:
+      - description: transfer
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/api.createTransferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.TransferTxResult'
+      summary: Create transfer
+      tags:
+      - transfers
+    put:
+      consumes:
+      - application/json
+      description: Fulfil transfer
+      parameters:
+      - description: transfer
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/api.fulfilTransferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.fulfilTransferResponse'
+      summary: Fulfil transfer
+      tags:
+      - transfers
 securityDefinitions:
   BasicAuth:
     type: basic

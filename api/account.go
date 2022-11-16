@@ -79,6 +79,10 @@ func (server *Server) updateAccount(ctx *gin.Context) {
 	}
 
 	result, err := server.store.UpdateUserBalanceTx(ctx, updateParams)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
 
 	ctx.JSON(http.StatusOK, result)
 }

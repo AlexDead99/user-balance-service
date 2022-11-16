@@ -118,6 +118,72 @@
                     }
                 }
             }
+        },
+        "/transfers": {
+            "put": {
+                "description": "Fulfil transfer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transfers"
+                ],
+                "summary": "Fulfil transfer",
+                "parameters": [
+                    {
+                        "description": "transfer",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.fulfilTransferRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.fulfilTransferResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create transfer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transfers"
+                ],
+                "summary": "Create transfer",
+                "parameters": [
+                    {
+                        "description": "transfer",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.createTransferRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/db.TransferTxResult"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -133,6 +199,59 @@
                 },
                 "owner": {
                     "type": "string"
+                }
+            }
+        },
+        "api.createTransferRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "products",
+                "service_id",
+                "user_id"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/db.ProductsParams"
+                    }
+                },
+                "service_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.fulfilTransferRequest": {
+            "type": "object",
+            "required": [
+                "status",
+                "transfer_id"
+            ],
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "Success",
+                        "Failed"
+                    ]
+                },
+                "transfer_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.fulfilTransferResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "boolean"
                 }
             }
         },
@@ -161,6 +280,28 @@
                 },
                 "owner": {
                     "type": "string"
+                }
+            }
+        },
+        "db.ProductsParams": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "product_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "db.TransferTxResult": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                },
+                "transaction_id": {
+                    "type": "integer"
                 }
             }
         },
