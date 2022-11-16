@@ -51,12 +51,12 @@ const generalReport = `-- name: GeneralReport :many
 SELECT transfer_id, user_id, transfers.service_id, total_price, created_at, description, status, services.service_id, name FROM transfers
 JOIN services
 ON transfers.service_id = services.service_id
-WHERE EXTRACT(MONTH FROM created_at) = $1 AND EXTRACT(YEAR FROM created_at) = $2 AND status IN ('Success')
+WHERE CAST(EXTRACT(MONTH FROM created_at) AS INTEGER) = $1 AND CAST(EXTRACT(YEAR FROM created_at) AS INTEGER) = $2 AND status IN ('Success')
 `
 
 type GeneralReportParams struct {
-	CreatedAt   time.Time `json:"created_at"`
-	CreatedAt_2 time.Time `json:"created_at_2"`
+	CreatedAt   int32 `json:"created_at"`
+	CreatedAt_2 int32`json:"created_at_2"`
 }
 
 type GeneralReportRow struct {
