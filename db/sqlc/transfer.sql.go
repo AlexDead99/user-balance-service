@@ -48,8 +48,10 @@ func (q *Queries) CreateTransfer(ctx context.Context, arg CreateTransferParams) 
 }
 
 const generalReport = `-- name: GeneralReport :many
-SELECT transfer_id, user_id, service_id, total_price, created_at, description, status FROM transfers
-WHERE EXTRACT(MONTH FROM created_at) = $1 AND EXTRACT(YEAR FROM created_at) = $2 AND status NOT IN ('Success')
+SELECT transfer_id, user_id, transfers.service_id, total_price, created_at, description, status, services.service_id, name FROM transfers
+JOIN services
+ON transfers.service_id = services.service_id
+WHERE EXTRACT(MONTH FROM created_at) = $1 AND EXTRACT(YEAR FROM created_at) = $2 AND status IN ('Success')
 `
 
 type GeneralReportParams struct {
@@ -57,15 +59,27 @@ type GeneralReportParams struct {
 	CreatedAt_2 time.Time `json:"created_at_2"`
 }
 
-func (q *Queries) GeneralReport(ctx context.Context, arg GeneralReportParams) ([]Transfers, error) {
+type GeneralReportRow struct {
+	TransferID  int32     `json:"transfer_id"`
+	UserID      int32     `json:"user_id"`
+	ServiceID   int32     `json:"service_id"`
+	TotalPrice  float32   `json:"total_price"`
+	CreatedAt   time.Time `json:"created_at"`
+	Description string    `json:"description"`
+	Status      string    `json:"status"`
+	ServiceID_2 int32     `json:"service_id_2"`
+	Name        string    `json:"name"`
+}
+
+func (q *Queries) GeneralReport(ctx context.Context, arg GeneralReportParams) ([]GeneralReportRow, error) {
 	rows, err := q.db.QueryContext(ctx, generalReport, arg.CreatedAt, arg.CreatedAt_2)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Transfers
+	var items []GeneralReportRow
 	for rows.Next() {
-		var i Transfers
+		var i GeneralReportRow
 		if err := rows.Scan(
 			&i.TransferID,
 			&i.UserID,
@@ -74,6 +88,8 @@ func (q *Queries) GeneralReport(ctx context.Context, arg GeneralReportParams) ([
 			&i.CreatedAt,
 			&i.Description,
 			&i.Status,
+			&i.ServiceID_2,
+			&i.Name,
 		); err != nil {
 			return nil, err
 		}
@@ -110,7 +126,7 @@ func (q *Queries) GetTransfer(ctx context.Context, transferID int32) (Transfers,
 
 const transactionHistoryForUser = `-- name: TransactionHistoryForUser :many
 SELECT transfer_id, user_id, service_id, total_price, created_at, description, status FROM transfers
-WHERE user_id = $1 AND EXTRACT(MONTH FROM created_at) >= $1 AND EXTRACT(YEAR FROM created_at) >= $2 AND status NOT IN ('Success')
+WHERE user_id = $1 AND EXTRACT(MONTH FROM created_at) >= $1 AND EXTRACT(YEAR FROM created_at) >= $2 AND status IN ('Success')
 `
 
 type TransactionHistoryForUserParams struct {
