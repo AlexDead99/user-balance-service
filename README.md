@@ -49,12 +49,21 @@ input params: service_id  - you can only buy products (service_id = 1). Products
 ### Folders
 
 `api` - here you can find endpoints
+
 `db` - database folder.
+
 ----`migration` - schemas to create/delete table
+
 ----`query` - actual SQL code. I use SQLC to generate golang code.
+
 ----`sqlc` - here you can find boilerplate code and tests
+
 --------`store` - here you can find tx implemenation
+
 --------`store_test` - tx tests
+
 ----`docs` - here you can find swagger code and actual schemas of tables in PDF format
+
 ----`reports` - folder for reports
+
 ----`utils` - some helper functions
