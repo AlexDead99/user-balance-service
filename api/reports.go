@@ -16,7 +16,8 @@ type MonthReportRequest struct {
 	Date string `json:"date" binding:"required"`
 }
 type MonthReportResponse struct {
-	Link string `json:"link"`
+	Link   string             `json:"link"`
+	Report map[string]float32 `json:"report"`
 }
 
 // ShowAccount godoc
@@ -88,5 +89,5 @@ func (server *Server) CreateMonthReport(ctx *gin.Context) {
 
 	downloadPath := "http://localhost:3000/static/" + fileName
 
-	ctx.JSON(http.StatusOK, MonthReportResponse{Link: downloadPath})
+	ctx.JSON(http.StatusOK, MonthReportResponse{Link: downloadPath, Report: reports})
 }

@@ -11,6 +11,10 @@ definitions:
     properties:
       link:
         type: string
+      report:
+        additionalProperties:
+          type: number
+        type: object
     type: object
   api.createAccountRequest:
     properties:

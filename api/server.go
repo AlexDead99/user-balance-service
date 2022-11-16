@@ -23,7 +23,7 @@ func NewServer(store *db.Store) *Server {
 	router.PUT("/transfers", server.fulfilTransfer)
 	router.POST("/report", server.CreateMonthReport)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.Static("/static", "./reports")
+	router.Static("/static", "./app/reports")
 
 	return server
 

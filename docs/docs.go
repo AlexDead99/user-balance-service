@@ -244,6 +244,12 @@ const docTemplate = `{
             "properties": {
                 "link": {
                     "type": "string"
+                },
+                "report": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number"
+                    }
                 }
             }
         },

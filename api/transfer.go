@@ -107,6 +107,7 @@ func (server *Server) fulfilTransfer(ctx *gin.Context) {
 		}
 
 		ctx.JSON(http.StatusOK, fulfilTransferResponse{Status: true})
+		return
 	}
 
 	txParams := db.DeleteTransferTxParams{

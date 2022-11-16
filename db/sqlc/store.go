@@ -176,7 +176,7 @@ func (store *Store) UpdateUserBalanceTx(ctx context.Context, arg UpdateUserBalan
 			Description: description,
 			Status:      "Success",
 		}
-		transfer, err := q.CreateTransfer(ctx, transferParams)
+		_, err = q.CreateTransfer(ctx, transferParams)
 
 		if err != nil {
 			return err
@@ -184,7 +184,7 @@ func (store *Store) UpdateUserBalanceTx(ctx context.Context, arg UpdateUserBalan
 
 		userParams := UpdateAccountParams{
 			AccountID: arg.UserId,
-			Balance:   transfer.TotalPrice,
+			Balance:   availableMoney,
 		}
 		updatedUser, err := q.UpdateAccount(ctx, userParams)
 		if err != nil {
