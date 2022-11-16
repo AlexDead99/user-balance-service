@@ -56,7 +56,7 @@ type updateAccountRequest struct {
 // @Produce      json
 // @Param        id   path      int  true  "Account ID"
 // @Param body body updateAccountRequest true "user"
-// @Success      200  {object}  db.Accounts
+// @Success      200  {object}  db.UpdateUserBalanceTxResult
 // @Router       /accounts/{id} [put]
 func (server *Server) updateAccount(ctx *gin.Context) {
 	var req updateAccountRequest
@@ -73,28 +73,39 @@ func (server *Server) updateAccount(ctx *gin.Context) {
 		return
 	}
 
+	updateParams := db.UpdateUserBalanceTxParams{
+		UserId: int32(userId),
+		Amount: req.Amount,
+	}
+
+	result, err := server.store.UpdateUserBalanceTx(ctx, updateParams)
+
+	ctx.JSON(http.StatusOK, result)
+}
+
+// ShowAccount godoc
+// @Summary      Get user's account
+// @Description  Get user's account
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Success      200  {object}  db.Accounts
+// @Router       /accounts/{id} [get]
+func (server *Server) getAccountInfo(ctx *gin.Context) {
+
+	id := ctx.Param("id")
+	userId, err := strconv.Atoi(id)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
 	existedUser, err := server.store.GetAccount(ctx, int32(userId))
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 
-	availableMoney := existedUser.Balance + req.Amount
-	if availableMoney < 0 {
-		ctx.JSON(http.StatusBadRequest, "Balance can't be negative")
-		return
-	}
-
-	updateUserParams := db.UpdateAccountParams{
-		AccountID: int32(userId),
-		Balance:   availableMoney,
-	}
-
-	updatedUser, err := server.store.UpdateAccount(ctx, updateUserParams)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, updatedUser)
+	ctx.JSON(http.StatusOK, existedUser)
 }

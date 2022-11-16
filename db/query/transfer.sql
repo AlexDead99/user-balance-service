@@ -14,3 +14,12 @@ UPDATE transfers
   set status = $2
 WHERE transfer_id = $1
 RETURNING *;
+
+-- name: TransactionHistoryForUser :many
+SELECT * FROM transfers
+WHERE user_id = $1 AND EXTRACT(MONTH FROM created_at) >= $1 AND EXTRACT(YEAR FROM created_at) >= $2 AND status NOT IN ('Success')
+
+-- name: GeneralReport :many
+SELECT * FROM transfers
+WHERE EXTRACT(MONTH FROM created_at) = $1 AND EXTRACT(YEAR FROM created_at) = $2 AND status NOT IN ('Success')
+

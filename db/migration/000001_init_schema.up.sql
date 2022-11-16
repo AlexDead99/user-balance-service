@@ -46,6 +46,7 @@ ALTER TABLE "ordersDetails" ADD FOREIGN KEY ("product_id") REFERENCES "products"
 
 
 INSERT INTO "services" ("name") VALUES('Buy');
+INSERT INTO "services" ("name") VALUES('Sell');
 
 INSERT INTO "products" ("name", "price", "amount") VALUES('TV', 120.0, 35);
 INSERT INTO "products" ("name", "price", "amount") VALUES('Xbox', 570.0, 10);

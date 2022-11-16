@@ -136,3 +136,66 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 
 	return result, err
 }
+
+type UpdateUserBalanceTxParams struct {
+	UserId int32   `json:"user_id"`
+	Amount float32 `json:"amount"`
+}
+type UpdateUserBalanceTxResult struct {
+	UserId  int32 `json:"user_id"`
+	Success bool  `json:"success"`
+}
+
+func (store *Store) UpdateUserBalanceTx(ctx context.Context, arg UpdateUserBalanceTxParams) (UpdateUserBalanceTxResult, error) {
+	var result UpdateUserBalanceTxResult
+	err := store.execTx(ctx, func(q *Queries) error {
+		user, err := q.GetAccountForUpdate(ctx)
+		if err != nil {
+			return err
+		}
+
+		availableMoney := user.Balance + arg.Amount
+
+		if availableMoney < 0 {
+			return fmt.Errorf("Balance can't be negative")
+		}
+
+		serviceId := 1 //Buy
+		description := "Depositing funds to the wallet"
+
+		if arg.Amount < 0 {
+			serviceId = 2 //Sell
+			description = "Withdrawal of funds from the wallet"
+
+		}
+
+		transferParams := CreateTransferParams{
+			UserID:      arg.UserId,
+			ServiceID:   int32(serviceId),
+			TotalPrice:  arg.Amount,
+			Description: description,
+			Status:      "Success",
+		}
+		transfer, err := q.CreateTransfer(ctx, transferParams)
+
+		if err != nil {
+			return err
+		}
+
+		userParams := UpdateAccountParams{
+			AccountID: arg.UserId,
+			Balance:   transfer.TotalPrice,
+		}
+		updatedUser, err := q.UpdateAccount(ctx, userParams)
+		if err != nil {
+			return err
+		}
+
+		result.Success = true
+		result.UserId = updatedUser.AccountID
+
+		return nil
+	})
+
+	return result, err
+}
