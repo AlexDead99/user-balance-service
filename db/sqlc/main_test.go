@@ -9,6 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+//Tests for local environment only.
 const (
 	dbDriver = "postgres"
 	dbSource = "postgresql://postgres:root@localhost:5432/simple?sslmode=disable"

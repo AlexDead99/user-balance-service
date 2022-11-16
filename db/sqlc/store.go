@@ -148,12 +148,12 @@ type UpdateUserBalanceTxResult struct {
 
 func (store *Store) UpdateUserBalanceTx(ctx context.Context, arg UpdateUserBalanceTxParams) (UpdateUserBalanceTxResult, error) {
 	var result UpdateUserBalanceTxResult
+
 	err := store.execTx(ctx, func(q *Queries) error {
-		user, err := q.GetAccountForUpdate(ctx)
+		user, err := q.GetAccountForUpdate(ctx, arg.UserId)
 		if err != nil {
 			return err
 		}
-
 		availableMoney := user.Balance + arg.Amount
 
 		if availableMoney < 0 {
@@ -172,7 +172,7 @@ func (store *Store) UpdateUserBalanceTx(ctx context.Context, arg UpdateUserBalan
 		transferParams := CreateTransferParams{
 			UserID:      arg.UserId,
 			ServiceID:   int32(serviceId),
-			TotalPrice:  arg.Amount,
+			TotalPrice:  availableMoney,
 			Description: description,
 			Status:      "Success",
 		}
@@ -198,4 +198,80 @@ func (store *Store) UpdateUserBalanceTx(ctx context.Context, arg UpdateUserBalan
 	})
 
 	return result, err
+}
+
+type DeleteTransferTxParams struct {
+	TransferId int32 `json:"transfer_id"`
+}
+type DeleteTransferTxResult struct {
+	Success bool `json:"success"`
+}
+
+func (store *Store) DeleteTransferTx(ctx context.Context, arg DeleteTransferTxParams) (DeleteTransferTxResult, error) {
+	var result DeleteTransferTxResult
+
+	err := store.execTx(ctx, func(q *Queries) error {
+		transfer, err := q.GetTransfer(ctx, arg.TransferId)
+		if err != nil {
+			return err
+		}
+
+		orders, err := q.ListOrders(ctx, transfer.TransferID)
+		if err != nil {
+			return err
+		}
+
+		products := []*ProductsParams{}
+
+		for _, order := range orders {
+			product := &ProductsParams{
+				ProductId: order.ProductID,
+				Amount:    order.Amount,
+			}
+			products = append(products, product)
+		}
+
+		for _, product := range products {
+			productForUpdate, err := q.GetProductForUpdate(ctx, product.ProductId)
+			if err != nil {
+				return err
+			}
+
+			updateParam := UpdateProductParams{
+				ProductID: product.ProductId,
+				Amount:    productForUpdate.Amount + product.Amount,
+			}
+
+			_, err = q.UpdateProduct(ctx, updateParam)
+			if err != nil {
+				return err
+			}
+		}
+
+		user, err := q.GetAccountForUpdate(ctx, transfer.UserID)
+		if err != nil {
+			return err
+		}
+
+		userParams := UpdateAccountParams{
+			AccountID: user.AccountID,
+			Balance:   user.Balance + transfer.TotalPrice,
+		}
+
+		_, err = q.UpdateAccount(ctx, userParams)
+		if err != nil {
+			return err
+		}
+
+		for _, order := range orders {
+			q.DeleteOrder(ctx, order.OrderID)
+		}
+
+		result.Success = true
+		return nil
+
+	})
+
+	return result, err
+
 }

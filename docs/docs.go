@@ -56,6 +56,36 @@ const docTemplate = `{
             }
         },
         "/accounts/{id}": {
+            "get": {
+                "description": "Get user's account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "accounts"
+                ],
+                "summary": "Get user's account",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/db.Accounts"
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "Update user's account",
                 "consumes": [
@@ -90,7 +120,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/db.Accounts"
+                            "$ref": "#/definitions/db.UpdateUserBalanceTxResult"
                         }
                     }
                 }
@@ -138,6 +168,17 @@ const docTemplate = `{
                 },
                 "owner": {
                     "type": "string"
+                }
+            }
+        },
+        "db.UpdateUserBalanceTxResult": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         }

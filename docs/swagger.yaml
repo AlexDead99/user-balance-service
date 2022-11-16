@@ -28,6 +28,13 @@ definitions:
       owner:
         type: string
     type: object
+  db.UpdateUserBalanceTxResult:
+    properties:
+      success:
+        type: boolean
+      user_id:
+        type: integer
+    type: object
 host: localhost:3000
 info:
   contact: {}
@@ -62,6 +69,26 @@ paths:
       tags:
       - accounts
   /accounts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user's account
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.Accounts'
+      summary: Get user's account
+      tags:
+      - accounts
     put:
       consumes:
       - application/json
@@ -84,7 +111,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/db.Accounts'
+            $ref: '#/definitions/db.UpdateUserBalanceTxResult'
       summary: Update account's balance
       tags:
       - accounts
