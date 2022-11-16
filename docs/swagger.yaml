@@ -1,5 +1,17 @@
 basePath: /
 definitions:
+  api.MonthReportRequest:
+    properties:
+      date:
+        type: string
+    required:
+    - date
+    type: object
+  api.MonthReportResponse:
+    properties:
+      link:
+        type: string
+    type: object
   api.createAccountRequest:
     properties:
       balance:
@@ -165,6 +177,28 @@ paths:
       summary: Update account's balance
       tags:
       - accounts
+  /report:
+    post:
+      consumes:
+      - application/json
+      description: Info about succeeded transfers for current month
+      parameters:
+      - description: transfer
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/api.MonthReportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.MonthReportResponse'
+      summary: Info about succeeded transfers for current month
+      tags:
+      - reports
   /transfers:
     post:
       consumes:
@@ -208,6 +242,28 @@ paths:
       summary: Fulfil transfer
       tags:
       - transfers
+  /users/report:
+    post:
+      consumes:
+      - application/json
+      description: Info about succeeded user's transfers
+      parameters:
+      - description: reportBody
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/api.MonthReportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.MonthReportResponse'
+      summary: Info about succeeded user's transfers
+      tags:
+      - reports
 securityDefinitions:
   BasicAuth:
     type: basic

@@ -23,5 +23,5 @@ WHERE user_id = $1 AND EXTRACT(MONTH FROM created_at) >= $1 AND EXTRACT(YEAR FRO
 SELECT * FROM transfers
 JOIN services
 ON transfers.service_id = services.service_id
-WHERE EXTRACT(MONTH FROM created_at) = $1 AND EXTRACT(YEAR FROM created_at) = $2 AND status IN ('Success');
+WHERE CAST(EXTRACT(MONTH FROM created_at) AS INTEGER) = $1 AND CAST(EXTRACT(YEAR FROM created_at) AS INTEGER) = $2 AND status IN ('Success');
 

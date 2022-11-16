@@ -21,6 +21,7 @@ func NewServer(store *db.Store) *Server {
 	router.GET("/accounts/:id", server.getAccountInfo)
 	router.POST("/transfers", server.createTransfer)
 	router.PUT("/transfers", server.fulfilTransfer)
+	router.POST("/report", server.CreateMonthReport)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return server

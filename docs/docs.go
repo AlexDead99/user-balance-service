@@ -126,6 +126,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/report": {
+            "post": {
+                "description": "Info about succeeded transfers for current month",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reports"
+                ],
+                "summary": "Info about succeeded transfers for current month",
+                "parameters": [
+                    {
+                        "description": "transfer",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.MonthReportRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.MonthReportResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/transfers": {
             "put": {
                 "description": "Fulfil transfer",
@@ -191,9 +225,62 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/report": {
+            "post": {
+                "description": "Info about succeeded user's transfers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reports"
+                ],
+                "summary": "Info about succeeded user's transfers",
+                "parameters": [
+                    {
+                        "description": "reportBody",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.MonthReportRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.MonthReportResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "api.MonthReportRequest": {
+            "type": "object",
+            "required": [
+                "date"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.MonthReportResponse": {
+            "type": "object",
+            "properties": {
+                "link": {
+                    "type": "string"
+                }
+            }
+        },
         "api.createAccountRequest": {
             "type": "object",
             "required": [
