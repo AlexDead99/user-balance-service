@@ -36,13 +36,23 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (Order
 	return i, err
 }
 
-const listOrders = `-- name: ListOrders :many
-SELECT order_id, transfer_id, product_id, amount, created_at FROM "ordersDetails"
-ORDER BY transfer_id
+const deleteOrder = `-- name: DeleteOrder :exec
+DELETE FROM "ordersDetails"
+WHERE order_id = $1
 `
 
-func (q *Queries) ListOrders(ctx context.Context) ([]OrdersDetails, error) {
-	rows, err := q.db.QueryContext(ctx, listOrders)
+func (q *Queries) DeleteOrder(ctx context.Context, orderID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteOrder, orderID)
+	return err
+}
+
+const listOrders = `-- name: ListOrders :many
+SELECT order_id, transfer_id, product_id, amount, created_at FROM "ordersDetails"
+WHERE order_id = $1
+`
+
+func (q *Queries) ListOrders(ctx context.Context, orderID int32) ([]OrdersDetails, error) {
+	rows, err := q.db.QueryContext(ctx, listOrders, orderID)
 	if err != nil {
 		return nil, err
 	}
