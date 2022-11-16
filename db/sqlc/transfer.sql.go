@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"time"
 )
 
 const createTransfer = `-- name: CreateTransfer :one
@@ -46,6 +47,47 @@ func (q *Queries) CreateTransfer(ctx context.Context, arg CreateTransferParams) 
 	return i, err
 }
 
+const generalReport = `-- name: GeneralReport :many
+SELECT transfer_id, user_id, service_id, total_price, created_at, description, status FROM transfers
+WHERE EXTRACT(MONTH FROM created_at) = $1 AND EXTRACT(YEAR FROM created_at) = $2 AND status NOT IN ('Success')
+`
+
+type GeneralReportParams struct {
+	CreatedAt   time.Time `json:"created_at"`
+	CreatedAt_2 time.Time `json:"created_at_2"`
+}
+
+func (q *Queries) GeneralReport(ctx context.Context, arg GeneralReportParams) ([]Transfers, error) {
+	rows, err := q.db.QueryContext(ctx, generalReport, arg.CreatedAt, arg.CreatedAt_2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Transfers
+	for rows.Next() {
+		var i Transfers
+		if err := rows.Scan(
+			&i.TransferID,
+			&i.UserID,
+			&i.ServiceID,
+			&i.TotalPrice,
+			&i.CreatedAt,
+			&i.Description,
+			&i.Status,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTransfer = `-- name: GetTransfer :one
 SELECT transfer_id, user_id, service_id, total_price, created_at, description, status FROM transfers
 WHERE transfer_id = $1 LIMIT 1
@@ -64,6 +106,47 @@ func (q *Queries) GetTransfer(ctx context.Context, transferID int32) (Transfers,
 		&i.Status,
 	)
 	return i, err
+}
+
+const transactionHistoryForUser = `-- name: TransactionHistoryForUser :many
+SELECT transfer_id, user_id, service_id, total_price, created_at, description, status FROM transfers
+WHERE user_id = $1 AND EXTRACT(MONTH FROM created_at) >= $1 AND EXTRACT(YEAR FROM created_at) >= $2 AND status NOT IN ('Success')
+`
+
+type TransactionHistoryForUserParams struct {
+	UserID    int32     `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+func (q *Queries) TransactionHistoryForUser(ctx context.Context, arg TransactionHistoryForUserParams) ([]Transfers, error) {
+	rows, err := q.db.QueryContext(ctx, transactionHistoryForUser, arg.UserID, arg.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Transfers
+	for rows.Next() {
+		var i Transfers
+		if err := rows.Scan(
+			&i.TransferID,
+			&i.UserID,
+			&i.ServiceID,
+			&i.TotalPrice,
+			&i.CreatedAt,
+			&i.Description,
+			&i.Status,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateTransfer = `-- name: UpdateTransfer :one
