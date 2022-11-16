@@ -218,40 +218,6 @@
                     }
                 }
             }
-        },
-        "/users/report": {
-            "post": {
-                "description": "Info about succeeded user's transfers",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "reports"
-                ],
-                "summary": "Info about succeeded user's transfers",
-                "parameters": [
-                    {
-                        "description": "reportBody",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.MonthReportRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.MonthReportResponse"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {

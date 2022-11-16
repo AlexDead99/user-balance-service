@@ -19,8 +19,8 @@ import (
 
 const (
 	dbDriver = "postgres"
-	//dbSource      = "postgresql://test:test@postgres:5432/simple?sslmode=disable"
-	dbSource      = "postgresql://postgres:root@localhost:5432/simple?sslmode=disable"
+	dbSource = "postgresql://test:test@postgres:5432/simple?sslmode=disable"
+	//dbSource      = "postgresql://postgres:root@localhost:5432/simple?sslmode=disable"
 	serverAddress = "0.0.0.0:3000"
 )
 

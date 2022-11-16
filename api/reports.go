@@ -5,22 +5,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	db "github.com/AlexDead99/user-balance-service/db/sqlc"
 	"github.com/gin-gonic/gin"
 )
-
-// ShowAccount godoc
-// @Summary      Info about succeeded user's transfers
-// @Description  Info about succeeded user's transfers
-// @Tags         reports
-// @Accept       json
-// @Produce      json
-// @Param body body MonthReportRequest true "reportBody"
-// @Success      200  {object} MonthReportResponse
-// @Router       /users/report [post]
-func (server *Server) CreateUserReport(ctx *gin.Context) {}
 
 type MonthReportRequest struct {
 	Date string `json:"date" binding:"required"`
@@ -47,16 +37,18 @@ func (server *Server) CreateMonthReport(ctx *gin.Context) {
 	}
 
 	date, err := time.Parse("2006-01-02", req.Date)
-	fmt.Println(date, err)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, "Can't convert to date")
 		return
 	}
 
+	month := int32(date.Month())
+	year := int32(date.Year())
 	params := db.GeneralReportParams{
-		CreatedAt:   date,
-		CreatedAt_2: date,
+		CreatedAt:   month,
+		CreatedAt_2: year,
 	}
+
 	transfers, err := server.store.GeneralReport(ctx, params)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -69,8 +61,15 @@ func (server *Server) CreateMonthReport(ctx *gin.Context) {
 		reports[transfer.Name] += transfer.TotalPrice
 	}
 
-	fileName := date.String() + ".csv"
-	f, err := os.Create("../" + fileName)
+	fileName := strconv.Itoa(int(month)) + "-" + strconv.Itoa(date.Year()) + ".csv"
+	pwd, err := os.Getwd()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	fullPath := pwd + "/reports/" + fileName
+	f, err := os.Create(fullPath)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -87,5 +86,7 @@ func (server *Server) CreateMonthReport(ctx *gin.Context) {
 		}
 	}
 
-	ctx.JSON(http.StatusOK, MonthReportResponse{Link: fileName})
+	downloadPath := "http://localhost:3000/static/" + fileName
+
+	ctx.JSON(http.StatusOK, MonthReportResponse{Link: downloadPath})
 }

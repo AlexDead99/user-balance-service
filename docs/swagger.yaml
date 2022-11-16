@@ -242,28 +242,6 @@ paths:
       summary: Fulfil transfer
       tags:
       - transfers
-  /users/report:
-    post:
-      consumes:
-      - application/json
-      description: Info about succeeded user's transfers
-      parameters:
-      - description: reportBody
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/api.MonthReportRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.MonthReportResponse'
-      summary: Info about succeeded user's transfers
-      tags:
-      - reports
 securityDefinitions:
   BasicAuth:
     type: basic

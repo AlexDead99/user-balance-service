@@ -172,7 +172,7 @@ func (store *Store) UpdateUserBalanceTx(ctx context.Context, arg UpdateUserBalan
 		transferParams := CreateTransferParams{
 			UserID:      arg.UserId,
 			ServiceID:   int32(serviceId),
-			TotalPrice:  availableMoney,
+			TotalPrice:  arg.Amount,
 			Description: description,
 			Status:      "Success",
 		}
